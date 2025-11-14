@@ -46,7 +46,7 @@ export default function Home() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-4">
               <TelegramLogin
                 botName="cefrautocheckerbot"
-                authUrl="https://multimock.vercel.app/me"
+                authUrl="http://localhost:5000/auth/telegram/callback"
                 size="medium"
                 requestAccess="write"
                 className="flex justify-center"
