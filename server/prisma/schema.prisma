@@ -1,0 +1,60 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         Int      @id @default(autoincrement())
+  telegramId BigInt   @unique
+  username   String?
+  firstName  String?
+  lastName   String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  exams Exam[]
+
+  @@map("users")
+}
+
+model Exam {
+  id               Int      @id @default(autoincrement())
+  name             String
+  listeningAnswers Json     // Array of correct answers for listening section
+  readingAnswers   Json     // Array of correct answers for reading section
+  date             DateTime
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  userId       Int
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  studentsExams StudentsExam[]
+
+  @@map("exams")
+}
+
+model StudentsExam {
+  firstname       String
+  lastname        String
+  middlename      String // Required as part of composite primary key (use empty string if no middle name)
+  listeningResult Int
+  readingResult   Int
+  date            DateTime
+  examId          Int
+
+  exam Exam @relation(fields: [examId], references: [id], onDelete: Cascade)
+
+  @@id([firstname, lastname, middlename, examId])
+  @@map("students_exams")
+}
